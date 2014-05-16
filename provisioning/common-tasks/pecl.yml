@@ -9,9 +9,11 @@
   shell: pecl list | grep -i 'apc' || true
   register: php_pecl_xdebug_exists
 
-- name: APC | apc install
-  command: pecl install apc
-  when_string: ${php_pecl_xdebug_exists.stdout} == ''
+# freezes during initial setup run command manually for now
+# TODO: Fix freezing issue
+#- name: APC | apc install
+  #command: pecl install apc
+  #when: php_pecl_xdebug_exists.stdout == ""
 
 - name: APC | Fetch PHP extension dir
   shell: php -i | grep -i '^extension_dir' | awk '{print $3}'

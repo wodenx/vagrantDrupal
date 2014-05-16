@@ -3,7 +3,7 @@
 #
 
 ---
-- hosts: vagrant
+- hosts: all
   user: vagrant
   sudo: yes
 
@@ -25,7 +25,7 @@
     # Apt package installation of required software.
     #
     - name: General | Install required packages.
-      action: apt pkg=$item state=installed
+      action: apt pkg={{item}} state=installed
       tags: common
       with_items:
         - build-essential
@@ -43,6 +43,7 @@
         - php5-sqlite
         - php5-xmlrpc
         - php-soap
+        - php-apc
         - php5-gd
         - sendmail
         - unzip

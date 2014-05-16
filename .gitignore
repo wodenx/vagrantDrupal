@@ -1,3 +1,6 @@
 .vagrant
 pension
 wit
+.DS_Store*
+github_rsa
+projects/

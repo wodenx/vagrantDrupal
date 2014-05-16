@@ -12,6 +12,7 @@ Vagrant.configure("2") do |config|
   # config.vm.synced_folder ".", "/vagrant", :nfs => true
   config.vm.synced_folder ".", "/vagrant", id: "vagrant-root", nfs: true
 
+  config.ssh.private_key_path = ["~/.ssh/id_rsa", "~/.vagrant.d/insecure_private_key"]
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--name", "precise64"]
     vb.customize ["modifyvm", :id, "--memory", "1024"]
@@ -19,7 +20,9 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :ansible do |ansible|
     ansible.playbook = "provisioning/setup.yml"
-    ansible.inventory_file = "provisioning/ansible_host"
+    ansible.raw_arguments = "-i provisioning/ansible_host"
+    #ansible.inventory_file = "provisioning/ansible_host"
+    #ansible.verbose = "vvvv"
   end
 
 end
