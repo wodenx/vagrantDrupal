@@ -27,7 +27,7 @@
   tags: drush
 
 - name: Drush | Ensure .drush directory present
-  file: path=/home/vagrant/.drush state=directory
+  copy: src=files/acquiacloud/.drush/ dest=/home/vagrant/.drush/
 
 - name: Drush | copy .bashrc for drush
   copy: src=files/example.bashrc dest=/home/vagrant/.bashrc

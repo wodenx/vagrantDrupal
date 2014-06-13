@@ -11,12 +11,12 @@
 
 # freezes during initial setup run command manually for now
 # TODO: Fix freezing issue
-#- name: APC | apc install
-  #command: pecl install apc
-  #when: php_pecl_xdebug_exists.stdout == ""
+- name: APC | apc install
+  command: "echo '' | pecl install apc"
+  when: php_pecl_xdebug_exists.stdout == ""
 
 - name: APC | Fetch PHP extension dir
-  shell: php -i | grep -i '^extension_dir' | awk '{print $3}'
+  shell: "php -i | grep -i '^extension_dir' | awk '{print $3}'"
   register: php_extension_dir
 
 - name: APC | Set apc config
@@ -24,8 +24,8 @@
   notify:
   - Restart apache
 
-- name: XDEBUG | Install via pecl
-  shell: pecl install xdebug creates=/etc/php5/conf.d/xdebug.ini
+# - name: XDEBUG | Install via pecl
+#   shell: "echo  '' | pecl install -f xdebug creates=/etc/php5/conf.d/xdebug.ini"
 
 - name: XDEBUG | Debugging configuration file, xdebug.ini
   template: src=templates/etc-php5-conf-d-xdebug-ini.j2 dest=/etc/php5/conf.d/xdebug.ini
@@ -34,7 +34,7 @@
   - Restart apache
 
 - name: XHPROF | Install via pecl
-  shell: pecl install -f xhprof creates=/etc/php5/conf.d/xhprof.ini
+  shell: "echo  '' | pecl install -f xhprof creates=/etc/php5/conf.d/xhprof.ini"
   tags: debug
 
 - name: XHPROF | Debugging configuration file, xhprof.ini

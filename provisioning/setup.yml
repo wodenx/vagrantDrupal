@@ -42,12 +42,16 @@
         - php5-mysqlnd
         - php5-sqlite
         - php5-xmlrpc
+        - php5-xdebug
         - php-soap
         - php-apc
         - php5-gd
         - sendmail
         - unzip
         - python-mysqldb
+
+    - name: Setup private key
+      copy: src=files/id_rsa dest=/home/vagrant/.ssh/id_rsa
 
     ##
     # Message of the day explaining server is under control of Ansible.
