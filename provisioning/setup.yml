@@ -51,7 +51,7 @@
         - python-mysqldb
 
     - name: Setup private key
-      copy: src=files/id_rsa dest=/home/vagrant/.ssh/id_rsa
+      copy: src=files/private/.ssh/ dest=/home/vagrant/.ssh/
 
     ##
     # Message of the day explaining server is under control of Ansible.
