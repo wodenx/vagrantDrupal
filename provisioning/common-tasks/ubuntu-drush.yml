@@ -35,6 +35,9 @@
 - name: Drush | Add drushrc.php
   copy: src=files/drush-drushrc.php dest=/home/vagrant/.drush/drushrc.php
 
+- name: Drush | Set .drush permissions
+  file: path=/home/vagrant/.drush  mode=0775 owner=vagrant
+
 - name: Drush - dev | Install Module Builder
   command: drush dl -y module_builder --destination=/home/vagrant/.drush/ creates=/home/vagrant/.drush/module_builder
   tags: drush-dev
