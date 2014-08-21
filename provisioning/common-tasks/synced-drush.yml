@@ -1,0 +1,69 @@
+---
+##
+# Drush install, a Drupal shell tool.
+#
+# Ubuntu only due to using apt.
+#
+- name: Check for drush in a synced folder
+  stat: path=/vagrant/drush
+  register: synced
+
+- name: Drush | Install PHP PEAR
+  apt: pkg=php-pear state=installed
+  tags: drush
+  when: synced.stat.exists == false
+
+- name: Drush | Update PEAR
+  command: pear upgrade-all
+  ignore_errors: yes
+  tags: drush
+  when: synced.stat.exists == false
+
+- name: Drush | Setup PEAR channel
+  command: pear channel-discover pear.drush.org creates=/usr/share/php/.channels/pear.drush.org.reg
+  tags: drush
+  when: synced.stat.exists == false
+
+- name: Drush | Install drush
+  command: pear install drush/drush creates=/usr/bin/drush
+  tags: drush
+  when: synced.stat.exists == false
+
+- name: Drush | Add symlink to /usr/local/drush/drush
+  command: ln -s /vagrant/drush/drush /usr/bin/drush
+  sudo: yes
+  when: synced.stat.exists == true
+
+- name: Drush | Run drush once so it downloads it's dependencies
+  command: drush
+  ignore_errors: yes
+  tags: drush
+
+- name: Drush | Ensure .drush directory present
+  copy: src=files/acquiacloud/.drush/ dest=/home/vagrant/.drush/
+
+- name: Drush | copy .bashrc for drush
+  copy: src=files/example.bashrc dest=/home/vagrant/.bashrc
+
+- name: Drush | Add drushrc.php
+  copy: src=files/drush-drushrc.php dest=/home/vagrant/.drush/drushrc.php
+
+- name: Drush | Set .drush permissions
+  file: path=/home/vagrant/.drush  mode=0775 owner=vagrant
+
+- name: Drush - dev | Install Module Builder
+  command: drush dl -y module_builder --destination=/home/vagrant/.drush/ creates=/home/vagrant/.drush/module_builder
+  tags: drush-dev
+
+- name: Drush - dev | Add hooks data directory to drushrc.php
+  shell: echo $command_specific['mb-build']['write'] = TRUE; >> /home/vagrant/.drush/drushrc.php
+  tags: drush-dev
+
+- name: Drush - dev | Check if hook directory is present
+  file: path=/home/vagrant/.drush/hooks state=directory
+  tags: drush-dev
+
+- name: Drush - dev | Add hooks data directory to drushrc.php
+  shell: echo $options['data'] = '/home/vagrant/.drush/hooks'; >> /home/vagrant/.drush/drushrc.php
+  tags: drush-dev
+

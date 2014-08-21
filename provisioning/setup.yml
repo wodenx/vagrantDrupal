@@ -33,6 +33,9 @@
         - curl
         - apache2
         - mysql-server
+        - memcached
+        - varnish
+        - mongodb
         - mysql-client
         - sqlite
         - php5
@@ -46,12 +49,13 @@
         - php-soap
         - php-apc
         - php5-gd
+        - php5-memcached
         - sendmail
         - unzip
         - python-mysqldb
 
     - name: Setup private key
-      copy: src=files/private/.ssh/ dest=/home/vagrant/.ssh/
+      copy: src=files/private/.ssh/id_rsa dest=/home/vagrant/.ssh/id_rsa
 
     ##
     # Message of the day explaining server is under control of Ansible.
@@ -89,6 +93,7 @@
     # Drush install, a Drupal shell tool.
     #
     - include: ./common-tasks/ubuntu-drush.yml
+    #- include: ./common-tasks/synced-drush.yml
 
     - include: ./common-tasks/pecl.yml
 

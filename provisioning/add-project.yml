@@ -17,16 +17,24 @@
     - name: Apache | Add vhost for the project
       template: src=templates/etc-apache2-sites-available-devserver.j2 dest=/etc/apache2/sites-available/{{ project }}
 
-    - name: Mysql | Create new database
-      mysql_db: db={{ project }} state=present
+    #- name: Mysql | Create new database
+    #  mysql_db: db={{ project }} state=present
 
-    - name: Drush | Download and install drupal 7
-      action: shell drush qd {{ project }} {{ modules }} -y --enable --account-mail={{ account_mail }} --account-name={{ account_name }} --account-pass={{ account_pass }} --site-name={{ site_name }} --locale={{ locale }} --db-url={{ db_url }} -y chdir=/vagrant
-      ignore_errors: yes
+    #- name: Drush | Download and install drupal 7
+    #  action: shell drush qd {{ project }} {{ modules }} -y --enable --account-mail={{ account_mail }} --account-name={{ account_name }} --account-pass={{ account_pass }} --site-name={{ site_name }} --locale={{ locale }} --db-url={{ db_url }} -y chdir=/vagrant
+    #  ignore_errors: yes
 
-    - name: Shell | Change drupal directory name to www
-      action: shell mv drupal www chdir=/vagrant/{{ project }}
+    - name: Shell | Link drupal directory name to www
+      command: ln -s /vagrant/{{ project }}/docroot /vagrant/{{ project }}/www
 
+    - name: Drush | Run site install
+      shell: drush -y si --db-url=mysql://root:password@localhost/{{ project }} chdir=/vagrant/{{ project }}/www
+      register: siout
+
+    - debug: siout.stdout_lines
+
+    - name: Drush | Sync db
+      shell: drush sql-sync @{{ project }}.prod @self chdir=/vagrant/{{ project }}/www
     # - name: Drush | Set aliases.drushrc.php
     #   template: src=files/drush-aliases-drushrc-php.j2 dest=/home/vagrant/.drush/{{ project }}.aliases.drushrc.php
     #
