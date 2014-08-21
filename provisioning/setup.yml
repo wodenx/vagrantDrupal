@@ -8,7 +8,7 @@
   sudo: yes
 
   vars_files:
-    - settings.yml
+    - [ settings.yml, vars/default-settings.yml ]
 
   tasks:
 
@@ -53,9 +53,13 @@
         - sendmail
         - unzip
         - python-mysqldb
+        - git
 
     - name: Setup private key
       copy: src=files/private/.ssh/id_rsa dest=/home/vagrant/.ssh/id_rsa
+
+    - name: Setup known hosts
+      copy: src=files/private/.ssh/known_hosts dest=/home/vagrant/.ssh/known_hosts
 
     ##
     # Message of the day explaining server is under control of Ansible.

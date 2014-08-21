@@ -10,31 +10,37 @@
     project: "Drupal project name"
 
   vars_files:
-    - settings.yml
+    - [ settings.yml, vars/default-settings.yml ]
 
   tasks:
 
     - name: Apache | Add vhost for the project
       template: src=templates/etc-apache2-sites-available-devserver.j2 dest=/etc/apache2/sites-available/{{ project }}
 
-    #- name: Mysql | Create new database
-    #  mysql_db: db={{ project }} state=present
+    - name: Mysql | Create new database
+      mysql_db: db={{ project }} state=present
 
     #- name: Drush | Download and install drupal 7
     #  action: shell drush qd {{ project }} {{ modules }} -y --enable --account-mail={{ account_mail }} --account-name={{ account_name }} --account-pass={{ account_pass }} --site-name={{ site_name }} --locale={{ locale }} --db-url={{ db_url }} -y chdir=/vagrant
     #  ignore_errors: yes
 
     - name: Shell | Link drupal directory name to www
-      command: ln -s /vagrant/{{ project }}/docroot /vagrant/{{ project }}/www
+      command: ln -s /vagrant/{{ project }}/docroot /vagrant/{{ project }}/www creates=/vagrant/{{ project }}/www
 
-    - name: Drush | Run site install
-      shell: drush -y si --db-url=mysql://root:password@localhost/{{ project }} chdir=/vagrant/{{ project }}/www
-      register: siout
+    #- name: Drush | Run site install
+    #  shell: drush -y si --db-url=mysql://root:password@localhost/{{ project }} chdir=/vagrant/{{ project }}/www
+    #  register: siout
+    #  sudo: no
+    - file: path=/vagrant/{{ project }}/www/sites/default  mode=755
 
-    - debug: siout.stdout_lines
+    - name: File | Create local.settings.php
+      template: src=templates/local-settings-php.j2 dest=/vagrant/{{ project }}/www/sites/default/local.settings.php
+
+    - file: path=/vagrant/{{ project }}/www/sites/default  mode=555
 
     - name: Drush | Sync db
-      shell: drush sql-sync @{{ project }}.prod @self chdir=/vagrant/{{ project }}/www
+      shell: drush -yv sql-sync @{{ project }}.prod @self chdir=/vagrant/{{ project }}/www
+      sudo: no
     # - name: Drush | Set aliases.drushrc.php
     #   template: src=files/drush-aliases-drushrc-php.j2 dest=/home/vagrant/.drush/{{ project }}.aliases.drushrc.php
     #

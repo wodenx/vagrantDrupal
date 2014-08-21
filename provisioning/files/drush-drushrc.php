@@ -25,7 +25,7 @@ $options['drush_usage_send'] = TRUE;
 /**
  * For sql-sync
  */
-$options['dump-dir'] = '/vagrant';
+//$options['dump-dir'] = '/vagrant';
 
 /**
  * Specify the filename and path where 'sql-dump' should store backups of
